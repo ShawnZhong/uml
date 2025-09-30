@@ -2,12 +2,14 @@ OUT ?= $(abspath ../rootfs/data/kmod)
 SRC ?= $(shell pwd)
 KERNELDIR ?= $(abspath ../linux-6.14)
 
-obj-m := main.o
-CFLAGS_main.o := -I$(KERNELDIR)
+obj-m := sched_sim.o sched_trace.o
 
-main.ko: main.c
+# Allow the use of private headers
+ccflags-y := -I$(KERNELDIR)
+
+sched_sim.ko sched_trace.ko: sched_sim.c sched_trace.c
 	$(MAKE) -C ${KERNELDIR} M=$(SRC) modules ARCH=um
-	cp $(SRC)/main.ko $(OUT)/main.ko
+	cp $(SRC)/*.ko $(OUT)
 
 .PHONY: clean
 clean:

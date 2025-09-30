@@ -154,7 +154,7 @@ int main() {
   mount_filesystems();
   execute_external((char *[]){
       "insmod",
-      "kmod/main.ko",
+      "kmod/sched_sim.ko",
       NULL,
   });
   builtin_exit();
