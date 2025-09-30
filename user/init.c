@@ -152,6 +152,13 @@ int main() {
   printf("Welcome to UML Simple Root Filesystem\n");
 
   mount_filesystems();
+  execute_external((char *[]){
+      "insmod",
+      "kmod/main.ko",
+      NULL,
+  });
+  builtin_exit();
+
   shell_loop();
   builtin_exit();
   return 0;
