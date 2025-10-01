@@ -74,7 +74,7 @@ static void init_sched(void) {
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
     INIT_LIST_HEAD(&rq->cfs.leaf_cfs_rq_list);
-    rq->tmp_alone_branch = &rq->cfs.leaf_cfs_rq_list;
+    rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
     kernel_init_tg_cfs_entry(&root_task_group, &rq->cfs, NULL, i, NULL);
 #endif
     rq->cpu_capacity = SCHED_CAPACITY_SCALE;

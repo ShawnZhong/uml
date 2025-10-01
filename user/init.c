@@ -158,7 +158,7 @@ int main() {
       "sched_sim.ko",
       NULL,
   });
-  // builtin_exit();
+  builtin_exit();
 
   shell_loop();
   builtin_exit();
