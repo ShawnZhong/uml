@@ -21,6 +21,10 @@ int mount_filesystems() {
     perror("mount");
     return 1;
   }
+  if (mount("none", "/sys/kernel/debug", "debugfs", 0, "") != 0) {
+    perror("mount");
+    return 1;
+  }
   return 0;
 }
 
@@ -152,13 +156,18 @@ int main() {
   printf("Welcome to UML Simple Root Filesystem\n");
 
   mount_filesystems();
+  // execute_external((char *[]){
+  //     "insmod",
+  //     "sched_trace.ko",
+  //     // "sched_sim.ko",
+  //     NULL,
+  // });
   execute_external((char *[]){
-      "insmod",
-      // "sched_trace.ko",
-      "sched_sim.ko",
+      "cat",
+      "/sys/kernel/debug/sched/debug",
       NULL,
   });
-  builtin_exit();
+  // builtin_exit();
 
   shell_loop();
   builtin_exit();
