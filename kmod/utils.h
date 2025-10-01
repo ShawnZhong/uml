@@ -18,8 +18,8 @@
 #define SCHED_DEBUG(fmt, ...) pr_info(TERM_GRAY fmt TERM_RESET, ##__VA_ARGS__)
 
 static void print_task(struct task_struct *task) {
-  SCHED_INFO(" - pid=%d, comm=%s, state=%x", task->pid, task->comm,
-             task->__state);
+  SCHED_INFO(" - pid=%d, comm=%s, state=%x, vruntime=%llu", task->pid,
+             task->comm, task->__state, task->se.vruntime);
 }
 
 static void print_rq(struct rq *rq) {

@@ -154,8 +154,8 @@ int main() {
   mount_filesystems();
   execute_external((char *[]){
       "insmod",
-      "sched_trace.ko",
-      // "sched_sim.ko",
+      // "sched_trace.ko",
+      "sched_sim.ko",
       NULL,
   });
   // builtin_exit();

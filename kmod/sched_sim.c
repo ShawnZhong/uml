@@ -84,6 +84,7 @@ static int __init sched_sim(void) {
 
     // Enqueue tasks
     for (int i = 0; i < 3; i++) {
+      tasks[i].se.vruntime = (3 - i) * 10000000;
       kernel_enqueue_task(rq, &tasks[i], 0);
       update_clock(rq);
       pr_info("Enqueued task %d on cpu %d\n", tasks[i].pid, i);
