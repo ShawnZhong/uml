@@ -18,13 +18,14 @@ def make_linux(um: bool = False, debug: bool = False, clean: bool = False):
 
     # Enable debug symbols
     if debug:
-        system(
-            f"cd {LINUX_DIR} && ./scripts/config "
-            "--enable CONFIG_DEBUG_INFO_DWARF5 "
-            "--disable DEBUG_INFO_REDUCED "
-            "--enable DEBUG_INFO_COMPRESSED_NONE "
-            "--disable DEBUG_INFO_SPLIT "
-        )
+        args = [
+            "--enable DEBUG_INFO_DWARF5",
+            "--disable DEBUG_INFO_REDUCED",
+            "--enable DEBUG_INFO_COMPRESSED_NONE",
+            "--disable DEBUG_INFO_SPLIT",
+            "--enable GDB_SCRIPTS",
+        ]
+        system(f"cd {LINUX_DIR} && ./scripts/config " + " ".join(args))
 
     # Build kernel
     system(f"make -C {LINUX_DIR} -j$(nproc) {arch}")

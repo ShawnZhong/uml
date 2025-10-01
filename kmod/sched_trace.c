@@ -10,6 +10,8 @@
 #include <kernel/sched/sched.h>
 #include <tools/lib/bpf/bpf_tracing.h>
 
+#include "utils.h"
+
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Shawn Zhong");
 MODULE_DESCRIPTION("Scheduler tracer");
@@ -19,8 +21,8 @@ static int enqueue_task_fair_handler(struct kprobe *kp, struct pt_regs *regs) {
   struct task_struct *p = (void *)PT_REGS_PARM2(regs);
   int flags = (int)PT_REGS_PARM3(regs);
 
-  pr_info("enqueue_task_fair: cpu=%d, p=%s, flags=%o\n", rq->cpu, p->comm,
-          flags);
+  SCHED_DEBUG("enqueue_task_fair: cpu=%d, p=%s, flags=%o", rq->cpu, p->comm,
+              flags);
   return 0;
 }
 

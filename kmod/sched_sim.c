@@ -8,17 +8,12 @@
 // Linux private headers
 #include <kernel/sched/sched.h>
 
+#include "kernel_sym.h"
+#include "utils.h"
+
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Shawn Zhong");
 MODULE_DESCRIPTION("Scheduler simulator");
-
-#define TERM_RESET "\x1b[0m"
-#define TERM_RED "\x1b[31m"
-#define TERM_GREEN "\x1b[32m"
-#define TERM_YELLOW "\x1b[33m"
-#define TERM_BLUE "\x1b[34m"
-#define TERM_MAGENTA "\x1b[35m"
-#define TERM_CYAN "\x1b[36m"
 
 // Global data structures
 struct root_domain rd;
@@ -30,68 +25,6 @@ struct task_group tg = {
     .cfs_rq = (struct cfs_rq **)&cfs_rq_array,
     .shares = ROOT_TASK_GROUP_LOAD,
 };
-
-// Kernel function pointers
-void (*kernel_enqueue_task)(struct rq *rq, struct task_struct *p, int flags);
-bool (*kernel_dequeue_task)(struct rq *rq, struct task_struct *p, int flags);
-void (*kernel_init_cfs_rq)(struct cfs_rq *cfs_rq);
-void (*kernel_fair_server_init)(struct rq *rq);
-void (*kernel_init_tg_cfs_entry)(struct task_group *tg, struct cfs_rq *cfs_rq,
-                                 struct sched_entity *se, int cpu,
-                                 struct sched_entity *parent);
-int (*kernel_sched_fork)(unsigned long clone_flags, struct task_struct *p);
-int (*kernel_init_rootdomain)(struct root_domain *rd);
-void (*kernel_rq_attach_root)(struct rq *rq, struct root_domain *rd);
-
-static void *get_kallsyms_lookup_name(void) {
-  struct kprobe kp = {.symbol_name = "kallsyms_lookup_name"};
-  int ret = register_kprobe(&kp);
-  if (ret < 0) {
-    pr_err("Failed to register kprobe: %d\n", ret);
-    // From `nm linux` or `grep System.map`
-    return (void *)0x6009fa1e;
-  }
-  unregister_kprobe(&kp);
-  return (void *)kp.addr;
-}
-
-static void init_kernel_symbols(void) {
-  void *(*kallsyms_lookup_name)(const char *name) = get_kallsyms_lookup_name();
-
-#define INIT_SYMBOL(name)                                                      \
-  do {                                                                         \
-    kernel_##name = kallsyms_lookup_name(#name);                               \
-    if (kernel_##name == NULL) {                                               \
-      pr_err("lookup_func_addr: %s not found\n", #name);                       \
-    }                                                                          \
-  } while (0)
-
-  INIT_SYMBOL(enqueue_task);
-  INIT_SYMBOL(dequeue_task);
-  INIT_SYMBOL(init_cfs_rq);
-  INIT_SYMBOL(fair_server_init);
-  INIT_SYMBOL(init_tg_cfs_entry);
-  INIT_SYMBOL(sched_fork);
-  INIT_SYMBOL(init_rootdomain);
-  INIT_SYMBOL(rq_attach_root);
-}
-
-static void print_task(struct task_struct *task) {
-  pr_info(TERM_GREEN " - pid=%d, comm=%s, state=%x" TERM_RESET "\n", task->pid,
-          task->comm, task->__state);
-}
-
-static void print_rq(struct rq *rq) {
-  pr_info(TERM_GREEN
-          "cpu=%d, nr_running=%d, nr_queued=%u, clock=%llu" TERM_RESET "\n",
-          cpu_of(rq), rq->nr_running, rq->cfs.nr_queued, rq->clock);
-  struct rb_node *node = rb_first_cached(&rq->cfs.tasks_timeline);
-  while (node) {
-    struct sched_entity *se = rb_entry(node, struct sched_entity, run_node);
-    print_task(task_of(se));
-    node = rb_next(&se->run_node);
-  }
-}
 
 struct task_spec {
   int pid;
