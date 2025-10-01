@@ -8,3 +8,6 @@ linux-*
 
 # Filesystem image
 rootfs/img.ext4
+
+# Python
+__pycache__

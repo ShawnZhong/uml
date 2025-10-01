@@ -1,16 +1,20 @@
 LINUX_DIR = linux-6.14
-ROOTFS = rootfs/img.ext4
 
 BEAR_CMD := $(if $(shell which bear),bear --append --output compile_commands.json --,)
 
 .PHONY: all
-all: linux rootfs user run
+all: linux rootfs user
 
 # Build the User Mode Linux kernel
-.PHONY: linux
-linux:
+.PHONY: uml
+uml:
 	$(MAKE) -C ${LINUX_DIR} -j$(nproc) defconfig ARCH=um
 	$(MAKE) -C ${LINUX_DIR} -j$(nproc) ARCH=um
+
+.PHONY: linux
+linux:
+	$(MAKE) -C ${LINUX_DIR} -j$(nproc) defconfig
+	$(MAKE) -C ${LINUX_DIR} -j$(nproc)
 
 # Build the userspace programs
 .PHONY: user
@@ -26,11 +30,6 @@ kmod:
 .PHONY: rootfs
 rootfs: user kmod
 	$(MAKE) -C rootfs
-
-# Run UML
-.PHONY: run
-run: rootfs
-	./${LINUX_DIR}/linux ubd0=${ROOTFS} root=/dev/ubda mem=256M rw
 
 .PHONY: clean
 clean:

@@ -124,7 +124,7 @@ void shell_loop() {
   builtin_help();
 
   while (1) {
-    printf("UML# ");
+    printf("# ");
     fflush(stdout);
 
     char line[MAX_LINE];
@@ -157,7 +157,7 @@ int main() {
       "kmod/sched_sim.ko",
       NULL,
   });
-  builtin_exit();
+  // builtin_exit();
 
   shell_loop();
   builtin_exit();
