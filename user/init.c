@@ -44,7 +44,7 @@ int builtin_pwd() {
   return 0;
 }
 
-int builtin_exit() { return reboot(RB_HALT_SYSTEM); }
+int builtin_exit() { return reboot(RB_POWER_OFF); }
 
 int builtin_help() {
   printf("Built-in commands:\n");
@@ -56,8 +56,8 @@ int builtin_help() {
   printf("  ps              - List processes\n");
   printf("  ls <dir>        - List directory:         `ls /proc`\n");
   printf("  cat <file>      - Print file contents:    `cat /proc/cpuinfo`\n");
-  printf("  insmod <file>   - Load a kernel module:   `insmod kmod/main.ko`\n");
-  printf("  rmmod <module>  - Unload a kernel module: `rmmod main`\n");
+  printf("  insmod <file>   - Load a kernel module:   `insmod sched_sim.ko`\n");
+  printf("  rmmod <module>  - Unload a kernel module: `rmmod sched_sim`\n");
   return 0;
 }
 
@@ -154,7 +154,8 @@ int main() {
   mount_filesystems();
   execute_external((char *[]){
       "insmod",
-      "kmod/sched_sim.ko",
+      "sched_trace.ko",
+      // "sched_sim.ko",
       NULL,
   });
   // builtin_exit();

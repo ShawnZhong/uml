@@ -1,14 +1,12 @@
 User Mode Linux
 ==============
 
-- Install dependencies: `./deps.sh`
+- Download Linux kernel: `./clone_linux.py`
 
-- Download Linux kernel: `wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.14.tar.xz`
+- Install dependencies: `./install_deps.sh`
 
-- Extract Linux Kernel: `tar -xvf linux-6.14.tar.xz`
+- Build Linux kernel: `./make_linux.py [--um] [--debug] [--clean]`
 
-- Build User Mode Linux kernel: `make linux`
+- Prepare root filesystem: `make`
 
-- Prepare root filesystem: `make rootfs`
-
-- Run UML: `make run`
+- Run kernel: `./run_uml.py` or `./run_qemu.py [--debug]`

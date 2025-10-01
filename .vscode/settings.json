@@ -1,0 +1,7 @@
+{
+    "files.exclude": {
+        "**/*.cmd": true,
+        "**/.cache": true,
+        "**/.tmp_*": true,
+    }
+}

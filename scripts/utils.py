@@ -1,6 +1,8 @@
+import logging
 import subprocess
 from enum import StrEnum
-import logging
+
+from .consts import PROJ_DIR
 
 
 class TermColor(StrEnum):
@@ -18,3 +20,7 @@ class TermColor(StrEnum):
 def system(cmd: str):
     logging.info(f"Running: `{TermColor.BLUE}{cmd}{TermColor.RESET}`")
     subprocess.run(cmd, shell=True, check=True)
+
+
+def make_rootfs():
+    system(f"make -C {PROJ_DIR} -j$(nproc) rootfs")

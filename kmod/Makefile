@@ -1,6 +1,6 @@
-OUT ?= $(abspath ../rootfs/data/kmod)
+OUT ?= $(abspath ../rootfs/data)
 SRC ?= $(shell pwd)
-KERNELDIR ?= $(abspath ../linux-6.14)
+KERNELDIR ?= $(abspath ../linux/current)
 
 obj-m := sched_sim.o sched_trace.o
 

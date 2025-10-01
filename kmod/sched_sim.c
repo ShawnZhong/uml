@@ -130,7 +130,7 @@ static int __init sched_sim(void) {
 
     kernel_init_cfs_rq(&rq->cfs);
     INIT_LIST_HEAD(&rq->cfs.leaf_cfs_rq_list);
-    kernel_init_tg_cfs_entry(&tg, &rq->cfs, &se_array[i], i, NULL);
+    kernel_init_tg_cfs_entry(&tg, &rq->cfs, NULL, i, NULL);
     kernel_fair_server_init(rq);
     kernel_rq_attach_root(rq, &rd);
     rq->curr = &init_task;
@@ -150,20 +150,20 @@ static int __init sched_sim(void) {
     struct rq *rq = &rq_array[0];
 
     // Enqueue tasks
-    for (int i = 0; i < 1; i++) {
-      tasks[i].sched_class->enqueue_task(rq, &tasks[i], 0);
+    for (int i = 0; i < 3; i++) {
+      kernel_enqueue_task(rq, &tasks[i], 0);
       update_clock(rq);
       pr_info("Enqueued task %d on cpu %d\n", tasks[i].pid, i);
       print_rq(rq);
     }
 
-    // // Dequeue tasks
-    // for (int i = 0; i < 1; i++) {
-    //   tasks[i].sched_class->dequeue_task(rq, &tasks[i], 0);
-    //   update_clock(rq);
-    //   pr_info("Dequeued task %d on cpu %d\n", tasks[i].pid, i);
-    //   print_rq(rq);
-    // }
+    // Dequeue tasks
+    for (int i = 0; i < 3; i++) {
+      kernel_dequeue_task(rq, &tasks[i], 0);
+      update_clock(rq);
+      pr_info("Dequeued task %d on cpu %d\n", tasks[i].pid, i);
+      print_rq(rq);
+    }
   }
   pr_info("Scheduler simulation complete\n");
   return 0;

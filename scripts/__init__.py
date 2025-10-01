@@ -1,8 +1,7 @@
 import logging
 
-from .utils import *
 from .consts import *
-from .linux import *
+from .utils import *
 
 logging.basicConfig(
     level=logging.DEBUG,

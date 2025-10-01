@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
 
 import argparse
+import os
+from pathlib import Path
 
-from scripts import system, LINUX_DIR, ROOTFS_IMG, make_rootfs
+from scripts import LINUX_DIR, ROOTFS_IMG, make_rootfs, system
 
 
 def run_qemu(debug: bool = False):
+    kvm_path = Path("/dev/kvm")
+    if not os.access(kvm_path, os.R_OK):
+        system(f"sudo chmod 666 {kvm_path}")
+
     cmd = [
         "qemu-system-x86_64",
         "-smp 4",
