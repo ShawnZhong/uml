@@ -8,7 +8,7 @@
             "name": "UML",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/linux-6.14/linux",
+            "program": "${workspaceFolder}/linux/current/linux",
             "args": [
                 "ubd0=rootfs/img.ext4",
                 "root=/dev/ubda",
