@@ -3,14 +3,16 @@ ROOTFS = rootfs/img.ext4
 
 BEAR_CMD := $(if $(shell which bear),bear --append --output compile_commands.json --,)
 
+NPROC := $(shell nproc)
+
 .PHONY: all
 all: linux rootfs user run
 
 # Build the User Mode Linux kernel
 .PHONY: linux
 linux:
-	$(MAKE) -C ${LINUX_DIR} -j$(nproc) defconfig ARCH=um
-	$(MAKE) -C ${LINUX_DIR} -j$(nproc) ARCH=um
+	$(MAKE) -C ${LINUX_DIR} -j${NPROC} defconfig ARCH=um
+	$(MAKE) -C ${LINUX_DIR} -j${NPROC} ARCH=um
 
 # Build the userspace programs
 .PHONY: user
