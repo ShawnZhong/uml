@@ -6,15 +6,19 @@ from scripts import LINUX_DIR, system
 
 
 def make_linux(um: bool = False, debug: bool = False, clean: bool = False):
-    arch = "ARCH=um" if um else ""
-
     # Clean up old build
     if clean:
         system(f"make -C {LINUX_DIR} -j$(nproc) mrproper")
 
+    # Build for UML
+    if um:
+        system(f"make -C {LINUX_DIR} -j$(nproc) ARCH=um defconfig")
+        system(f"make -C {LINUX_DIR} -j$(nproc) ARCH=um")
+        return
+
     # Generate config
     if not (LINUX_DIR / ".config").exists():
-        system(f"make -C {LINUX_DIR} -j$(nproc) defconfig {arch}")
+        system(f"make -C {LINUX_DIR} -j$(nproc) defconfig")
 
     # Enable debug symbols
     if debug:
@@ -28,7 +32,7 @@ def make_linux(um: bool = False, debug: bool = False, clean: bool = False):
         system(f"cd {LINUX_DIR} && ./scripts/config " + " ".join(args))
 
     # Build kernel
-    system(f"make -C {LINUX_DIR} -j$(nproc) {arch}")
+    system(f"make -C {LINUX_DIR} -j$(nproc)")
 
 
 if __name__ == "__main__":

@@ -4,6 +4,8 @@
 // Linux private headers
 #include <kernel/sched/sched.h>
 
+#include "logging.h"
+
 #define SYMBOL_LIST                                                            \
   X(void, enqueue_task, (struct rq * rq, struct task_struct * p, int flags))   \
   X(bool, dequeue_task, (struct rq * rq, struct task_struct * p, int flags))   \
@@ -30,9 +32,10 @@ static void *get_kallsyms_lookup_name(void) {
   struct kprobe kp = {.symbol_name = "kallsyms_lookup_name"};
   int ret = register_kprobe(&kp);
   if (ret < 0) {
-    pr_err("Failed to register kprobe: %d\n", ret);
-    // From `nm linux` or `grep System.map`
-    return (void *)0x6009fa1e;
+    SCHED_WARN("Failed to register kprobe: %d. Using hardcoded address.\n",
+               ret);
+    // From `nm linux/current/linux | grep kallsyms_lookup_name`
+    return (void *)0x600ad515;
   }
   unregister_kprobe(&kp);
   return (void *)kp.addr;

@@ -1,21 +1,21 @@
-#include <linux/printk.h>
-#include <linux/sched.h>
-
 // Linux private headers
 #include <kernel/sched/sched.h>
 
-#define TERM_RESET "\x1b[0m"
-#define TERM_RED "\x1b[31m"
-#define TERM_GREEN "\x1b[32m"
-#define TERM_YELLOW "\x1b[33m"
-#define TERM_BLUE "\x1b[34m"
-#define TERM_MAGENTA "\x1b[35m"
-#define TERM_CYAN "\x1b[36m"
-#define TERM_GRAY "\x1b[90m"
+#include "logging.h"
 
-#define SCHED_INFO(fmt, ...) pr_info(TERM_GREEN fmt TERM_RESET, ##__VA_ARGS__)
-#define SCHED_WARN(fmt, ...) pr_info(TERM_YELLOW fmt TERM_RESET, ##__VA_ARGS__)
-#define SCHED_DEBUG(fmt, ...) pr_info(TERM_GRAY fmt TERM_RESET, ##__VA_ARGS__)
+// From tools/lib/bpf/bpf_tracing.h
+#ifdef CONFIG_X86_64
+#define PT_REGS_PARM1(x) ((x)->di)
+#define PT_REGS_PARM2(x) ((x)->si)
+#define PT_REGS_PARM3(x) ((x)->dx)
+#define PT_REGS_PARM4(x) ((x)->cx)
+#define PT_REGS_PARM5(x) ((x)->r8)
+#define PT_REGS_RET(x) ((x)->sp)
+#define PT_REGS_FP(x) ((x)->bp)
+#define PT_REGS_RC(x) ((x)->ax)
+#else
+#error "Only support x86_64"
+#endif
 
 static void print_task(struct task_struct *task) {
   SCHED_INFO(" - pid=%d, comm=%s, state=%x, vruntime=%llu", task->pid,

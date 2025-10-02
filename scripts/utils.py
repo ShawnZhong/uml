@@ -22,5 +22,8 @@ def system(cmd: str):
     subprocess.run(cmd, shell=True, check=True)
 
 
-def make_rootfs():
-    system(f"make -C {PROJ_DIR} -j$(nproc) rootfs")
+def make_rootfs(uml: bool = False):
+    cmd = f"make -C {PROJ_DIR} -j$(nproc) rootfs"
+    if uml:
+        cmd = cmd + " ARCH=um"
+    system(cmd)
