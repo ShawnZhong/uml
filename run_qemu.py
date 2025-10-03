@@ -44,8 +44,8 @@ def run_qemu(debug: bool = False):
         "-cpu max",
         "-m 256M",
         f"-kernel {kernel_image_path}",
-        '-append "root=/dev/sda rw console=ttyS0 nokaslr"',
-        f"-drive file={ROOTFS_IMG},format=raw",
+        '-append "root=/dev/vda rw nokaslr"',
+        f"-drive if=virtio,file={ROOTFS_IMG},format=raw",
         "-nographic",
     ]
     if debug:
@@ -56,16 +56,9 @@ def run_qemu(debug: bool = False):
         cmd += ["-accel tcg"]
     if Arch.get() == Arch.ARM64:
         cmd += [
-            "-machine virt,gic-version=3",
+            "-machine virt",
             "-cpu cortex-a57",
         ]
-        for bios_path in [
-            Path("/usr/share/OVMF/OVMF_CODE.fd"),
-            Path("/usr/share/OVMF/OVMF_CODE_4M.fd"),
-        ]:
-            if bios_path.exists():
-                cmd += [f"-bios {bios_path}"]
-                break
 
     system(" ".join(cmd))
 
