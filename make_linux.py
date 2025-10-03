@@ -23,6 +23,7 @@ def make_linux(um: bool = False, debug: bool = False, clean: bool = False):
     # Enable debug symbols
     if debug:
         args = [
+            "--enable KPROBES",
             "--enable DEBUG_INFO_DWARF5",
             "--disable DEBUG_INFO_REDUCED",
             "--enable DEBUG_INFO_COMPRESSED_NONE",
