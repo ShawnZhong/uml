@@ -21,6 +21,10 @@ int mount_filesystems() {
     perror("mount");
     return 1;
   }
+  if (mount("none", "/sys/kernel/debug", "debugfs", 0, "") != 0) {
+    perror("mount");
+    return 1;
+  }
   return 0;
 }
 
@@ -44,7 +48,7 @@ int builtin_pwd() {
   return 0;
 }
 
-int builtin_exit() { return reboot(RB_HALT_SYSTEM); }
+int builtin_exit() { return reboot(RB_POWER_OFF); }
 
 int builtin_help() {
   printf("Built-in commands:\n");
@@ -56,8 +60,8 @@ int builtin_help() {
   printf("  ps              - List processes\n");
   printf("  ls <dir>        - List directory:         `ls /proc`\n");
   printf("  cat <file>      - Print file contents:    `cat /proc/cpuinfo`\n");
-  printf("  insmod <file>   - Load a kernel module:   `insmod kmod/main.ko`\n");
-  printf("  rmmod <module>  - Unload a kernel module: `rmmod main`\n");
+  printf("  insmod <file>   - Load a kernel module:   `insmod sched_sim.ko`\n");
+  printf("  rmmod <module>  - Unload a kernel module: `rmmod sched_sim`\n");
   return 0;
 }
 
@@ -124,7 +128,7 @@ void shell_loop() {
   builtin_help();
 
   while (1) {
-    printf("UML# ");
+    printf("# ");
     fflush(stdout);
 
     char line[MAX_LINE];
@@ -152,6 +156,19 @@ int main() {
   printf("Welcome to UML Simple Root Filesystem\n");
 
   mount_filesystems();
+  // execute_external((char *[]){
+  //     "insmod",
+  //     "sched_trace.ko",
+  //     // "sched_sim.ko",
+  //     NULL,
+  // });
+  execute_external((char *[]){
+      "cat",
+      "/sys/kernel/debug/sched/debug",
+      NULL,
+  });
+  // builtin_exit();
+
   shell_loop();
   builtin_exit();
   return 0;

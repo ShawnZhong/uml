@@ -4,7 +4,13 @@ compile_commands.events.json
 .cache
 
 # Linux source code
-linux-*
+/linux
+
+# Kernel module
+*.ko
 
 # Filesystem image
 rootfs/img.ext4
+
+# Python
+__pycache__
