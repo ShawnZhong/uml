@@ -38,13 +38,22 @@ def run_qemu(debug: bool = False):
         Arch.ARM64: LINUX_DIR / "arch/arm64/boot/Image",
     }[Arch.get()]
 
+    boot_args = [
+        "root=/dev/vda",
+        "rw",
+        "nokaslr",
+    ]
+
+    if Arch.get() == Arch.X86_64:
+        boot_args.append("console=ttyS0")
+
     cmd = [
         exe,
         "-smp 4",
         "-cpu max",
         "-m 256M",
         f"-kernel {kernel_image_path}",
-        '-append "root=/dev/vda rw nokaslr"',
+        f'-append "{" ".join(boot_args)}"',
         f"-drive if=virtio,file={ROOTFS_IMG},format=raw",
         "-nographic",
     ]
