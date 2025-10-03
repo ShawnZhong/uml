@@ -2,29 +2,71 @@
 
 import argparse
 import os
+from enum import Enum
 from pathlib import Path
 
 from scripts import LINUX_DIR, ROOTFS_IMG, make_rootfs, system
 
 
+class Arch(Enum):
+    X86_64 = "x86_64"
+    ARM64 = "arm64"
+
+    @classmethod
+    def get(cls):
+        machine = os.uname().machine
+        if machine == "x86_64":
+            return cls.X86_64
+        elif machine == "aarch64":
+            return cls.ARM64
+        else:
+            raise ValueError(f"Unsupported architecture: {machine}")
+
+
 def run_qemu(debug: bool = False):
     kvm_path = Path("/dev/kvm")
-    if not os.access(kvm_path, os.R_OK):
+    if kvm_path.exists() and not os.access(kvm_path, os.R_OK):
         system(f"sudo chmod 666 {kvm_path}")
 
+    exe = {
+        Arch.X86_64: "qemu-system-x86_64",
+        Arch.ARM64: "qemu-system-aarch64",
+    }[Arch.get()]
+
+    kernel_image_path = {
+        Arch.X86_64: LINUX_DIR / "arch/x86/boot/bzImage",
+        Arch.ARM64: LINUX_DIR / "arch/arm64/boot/Image",
+    }[Arch.get()]
+
     cmd = [
-        "qemu-system-x86_64",
+        exe,
         "-smp 4",
         "-cpu max",
         "-m 256M",
-        f"-kernel {LINUX_DIR}/arch/x86/boot/bzImage",
+        f"-kernel {kernel_image_path}",
         '-append "root=/dev/sda rw console=ttyS0 nokaslr"',
         f"-drive file={ROOTFS_IMG},format=raw",
         "-nographic",
-        "-accel kvm",
     ]
     if debug:
         cmd += ["-s", "-S"]
+    if kvm_path.exists():
+        cmd += ["-accel kvm"]
+    else:
+        cmd += ["-accel tcg"]
+    if Arch.get() == Arch.ARM64:
+        cmd += [
+            "-machine virt,gic-version=3",
+            "-cpu cortex-a57",
+        ]
+        for bios_path in [
+            Path("/usr/share/OVMF/OVMF_CODE.fd"),
+            Path("/usr/share/OVMF/OVMF_CODE_4M.fd"),
+        ]:
+            if bios_path.exists():
+                cmd += [f"-bios {bios_path}"]
+                break
+
     system(" ".join(cmd))
 
 
