@@ -43,6 +43,9 @@ def run_qemu(debug: bool = False):
         "rw",
         "nokaslr",
         "sched_verbose",
+        "isolcpus=nohz,managed_irq,1",
+        "rcu_nocbs=1",
+        "nowatchdog",
     ]
 
     if Arch.get() == Arch.X86_64:
@@ -50,7 +53,7 @@ def run_qemu(debug: bool = False):
 
     cmd = [
         exe,
-        "-smp 4",
+        "-smp 2",
         "-cpu max",
         "-m 256M",
         f"-kernel {kernel_image_path}",
@@ -58,8 +61,6 @@ def run_qemu(debug: bool = False):
         f"-drive if=virtio,file={ROOTFS_IMG},format=raw",
         "-nographic",
     ]
-    if debug:
-        cmd += ["-s", "-S"]
     if kvm_path.exists():
         cmd += ["-accel kvm"]
     else:
@@ -69,6 +70,8 @@ def run_qemu(debug: bool = False):
             "-machine virt",
             "-cpu cortex-a57",
         ]
+    if debug:
+        cmd += ["-s", "-S"]
 
     system(" ".join(cmd))
 

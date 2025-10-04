@@ -3,5 +3,6 @@
         "**/*.cmd": true,
         "**/.cache": true,
         "**/.tmp_*": true,
-    }
+    },
+    "search.useIgnoreFiles": false
 }

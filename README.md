@@ -5,7 +5,7 @@ User Mode Linux
 
 - Install dependencies: `./install_deps.sh`
 
-- Build Linux kernel: `./make_linux.py [--um] [--debug] [--clean]`
+- Build Linux kernel: `./make_linux.py [--uml] [--debug] [--clean]`
 
 - Prepare root filesystem: `make` (triggered by `./run_*.py` as well)
 

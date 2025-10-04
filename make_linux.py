@@ -4,6 +4,7 @@ import argparse
 
 from scripts import LINUX_DIR, system
 
+BEAR_CMD = "bear --append --output compile_commands.json --"
 
 def make_linux(uml: bool = False, debug: bool = False, clean: bool = False):
     extra = " ARCH=um" if uml else ""
@@ -26,11 +27,13 @@ def make_linux(uml: bool = False, debug: bool = False, clean: bool = False):
             "--disable DEBUG_INFO_SPLIT",
             "--enable GDB_SCRIPTS",
             "--enable SCHED_DEBUG",
+            "--enable NO_HZ_FULL",
+            "--enable RCU_NOCB_CPU",
         ]
         system(f"cd {LINUX_DIR} && ./scripts/config " + " ".join(args))
 
     # Build kernel
-    system(f"make -C {LINUX_DIR} -j$(nproc) {extra}")
+    system(f"{BEAR_CMD} make -C {LINUX_DIR} -j$(nproc) {extra}")
 
 
 if __name__ == "__main__":

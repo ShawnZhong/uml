@@ -59,7 +59,8 @@ int builtin_help() {
   printf("External commands:\n");
   printf("  ps              - List processes\n");
   printf("  ls <dir>        - List directory:         `ls /proc`\n");
-  printf("  cat <file>      - Print file contents:    `cat /proc/cpuinfo`\n");
+  printf("  cat <file>      - Print file contents:    `cat "
+         "/sys/kernel/debug/sched/debug`\n");
   printf("  insmod <file>   - Load a kernel module:   `insmod sched_sim.ko`\n");
   printf("  rmmod <module>  - Unload a kernel module: `rmmod sched_sim`\n");
   return 0;

@@ -6,6 +6,10 @@
 
 #include "logging.h"
 
+static void uninitialized_stub(void) {
+  SCHED_WARN("Uninitialized kernel symbol\n");
+}
+
 #define SYMBOL_LIST                                                            \
   X(void, enqueue_task, (struct rq * rq, struct task_struct * p, int flags))   \
   X(bool, dequeue_task, (struct rq * rq, struct task_struct * p, int flags))   \
@@ -21,10 +25,12 @@
   X(void, rq_attach_root, (struct rq * rq, struct root_domain * rd))           \
   X(void, init_cfs_bandwidth,                                                  \
     (struct cfs_bandwidth * cfs_bandwidth,                                     \
-     struct cfs_bandwidth * parent_cfs_bandwidth))
+     struct cfs_bandwidth * parent_cfs_bandwidth))                             \
+  X(void, arch_smp_send_reschedule, (int cpu))
 
 // Define function pointers
-#define X(ret_type, name, args) ret_type(*kernel_##name) args;
+#define X(ret_type, name, args)                                                \
+  ret_type(*kernel_##name) args = (void *)&uninitialized_stub;
 SYMBOL_LIST
 #undef X
 
@@ -49,7 +55,7 @@ static void init_kernel_symbols(void) {
   do {                                                                         \
     kernel_##name = kallsyms_lookup_name(#name);                               \
     if (kernel_##name == NULL) {                                               \
-      pr_err("lookup_func_addr: %s not found\n", #name);                       \
+      SCHED_WARN("lookup_func_addr: %s not found\n", #name);                   \
     }                                                                          \
   } while (0);
   SYMBOL_LIST
