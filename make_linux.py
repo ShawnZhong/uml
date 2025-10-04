@@ -25,6 +25,7 @@ def make_linux(uml: bool = False, debug: bool = False, clean: bool = False):
             "--enable DEBUG_INFO_COMPRESSED_NONE",
             "--disable DEBUG_INFO_SPLIT",
             "--enable GDB_SCRIPTS",
+            "--enable SCHED_DEBUG",
         ]
         system(f"cd {LINUX_DIR} && ./scripts/config " + " ".join(args))
 

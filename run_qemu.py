@@ -42,6 +42,7 @@ def run_qemu(debug: bool = False):
         "root=/dev/vda",
         "rw",
         "nokaslr",
+        "sched_verbose",
     ]
 
     if Arch.get() == Arch.X86_64:
