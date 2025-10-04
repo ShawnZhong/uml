@@ -21,9 +21,7 @@ def add_worktree(version: str, current: bool = False):
     if worktree_dir.exists():
         logging.info(f"Linux {version} already cloned to {worktree_dir}")
     else:
-        system(
-            f"cd {LINUX_MASTER_DIR} && git worktree add {worktree_dir} origin/{version}"
-        )
+        system(f"cd {LINUX_MASTER_DIR} && git worktree add {worktree_dir} {version}")
 
     if current:
         LINUX_DIR.unlink(missing_ok=True)
